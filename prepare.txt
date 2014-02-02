@@ -1,0 +1,11 @@
+try to test queue with delay
+
+
+Is the dead letter queue configured for the destination. A dead letter queue is used for storing messages that failed to get processed by consumers. If not set, then messages that fail to get processed will be dropped. If '*' appears in the name it will be replaced with the queue's id.
+    @XmlAttribute(name="dlq")
+    public String dlq;
+
+
+Should expired messages be sent to the dead letter queue? Defaults to false.
+    @XmlAttribute(name="dlq_expired")
+    public Boolean dlq_expired;
