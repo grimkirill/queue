@@ -26,6 +26,8 @@ class TestCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        var_dump($this->getContainer()->getParameter('kernel.root_dir'));
+        $client = $this->getContainer()->get('queue.producer.test');
+
+        $client->publish('test real');
     }
 } 

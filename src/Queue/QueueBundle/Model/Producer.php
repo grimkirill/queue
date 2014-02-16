@@ -23,10 +23,32 @@ class Producer
      */
     protected $driver;
 
-    public function publish($message)
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    function __construct($driver, $serializer)
     {
-        return $this->driver->send($this->serializer->serialize($message));
+        $this->driver = $driver;
+        $this->serializer = $serializer;
     }
 
+    /**
+     * @param \Queue\QueueBundle\Model\Config $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+    }
+
+    public function publish($message, Config $config = null)
+    {
+        $queueConfig = clone $this->config;
+        if ($config) {
+            $queueConfig->merge($config);
+        }
+        return $this->driver->send($this->serializer->serialize($message), $queueConfig);
+    }
 
 } 

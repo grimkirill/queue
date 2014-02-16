@@ -2,6 +2,28 @@ parameters:
 #    queue.example.class: Queue\QueueBundle\Example
 
 services:
-#    queue.example:
-#        class: %queue.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    queue.driver.stomp.client:
+        class: Stomp\Client
+        arguments:
+            - "tcp://192.168.0.111:61613"
+            - {login: admin, passcode: mypassword }
+
+    queue.driver.stomp:
+        class: Queue\QueueBundle\Driver\StompApolloDriver
+        calls:
+            - [setStompClient, [@queue.driver.stomp.client]]
+
+    queue.produser.config:
+        class: Queue\QueueBundle\Model\Config
+        calls:
+            - [setDestination, ["/queue/test"]]
+            - [setExpire, [10]]
+
+    queue.producer.serializer:
+        class: Queue\QueueBundle\Serializer\Json
+
+    queue.producer.test:
+        class: Queue\QueueBundle\Model\Producer
+        arguments: [@queue.driver.stomp, @queue.producer.serializer]
+        calls:
+            - [setConfig, [@queue.produser.config]]

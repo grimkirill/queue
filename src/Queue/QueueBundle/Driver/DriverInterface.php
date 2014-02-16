@@ -9,9 +9,12 @@
 namespace Queue\QueueBundle\Driver;
 
 
+use Queue\QueueBundle\Model\Config;
+
 interface DriverInterface
 {
-    public function send($data);
+
+    public function send($data, Config $config);
 
     public function subscribe($data);
 } 
