@@ -19,6 +19,16 @@ class StompDriver implements DriverInterface
      */
     protected $stompClient;
 
+    function __construct($params = array())
+    {
+        $host = $params['host'];
+        $config = array(
+            'login' => $params['user'],
+            'passcode' => $params['password'],
+            'host'     => $params['vhost'],
+        );
+        $this->stompClient = new Client($host, $config);
+    }
 
     /**
      * @param \Stomp\Client $stompClient

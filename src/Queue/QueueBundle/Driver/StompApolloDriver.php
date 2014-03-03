@@ -35,8 +35,6 @@ class StompApolloDriver implements DriverInterface
             $date->add($expire);
             $headers['expires'] = $date->format('U000');
         }
-        print_r($config->getConfig());
-
         $this->stompClient->send($config->getDestination(), $data, $headers);
     }
 

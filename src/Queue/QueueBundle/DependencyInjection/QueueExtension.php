@@ -4,6 +4,7 @@ namespace Queue\QueueBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -25,5 +26,17 @@ class QueueExtension extends Extension
         print_r($config);
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $this->loadConnections($config['connections'], $container);
+    }
+
+    protected function loadConnections($config, ContainerBuilder $container)
+    {
+        foreach ($config as $key => $connection) {
+
+            $driverClass = '%grimkirill.queue.connection.driver.' . $connection['driver'] . '%';
+            $definition = new Definition($driverClass, $connection);
+            $container->setDefinition(sprintf('queue.connection.%s', $key), $definition);
+        }
     }
 }

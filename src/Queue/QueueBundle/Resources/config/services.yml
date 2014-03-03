@@ -1,29 +1,40 @@
 parameters:
-#    queue.example.class: Queue\QueueBundle\Example
+    grimkirill.queue.connection.driver.array: Queue\QueueBundle\Driver\ArrayDriver
+    grimkirill.queue.connection.driver.stomp: Queue\QueueBundle\Driver\StompDriver
+    grimkirill.queue.connection.driver.stomp_apollo: Queue\QueueBundle\Driver\StompApolloDriver
+
+    grimkirill.queue.producer.class: Queue\QueueBundle\Model\Producer
 
 services:
-    queue.driver.stomp.client:
-        class: Stomp\Client
-        arguments:
-            - "tcp://192.168.0.111:61613"
-            - {login: admin, passcode: mypassword }
-
-    queue.driver.stomp:
-        class: Queue\QueueBundle\Driver\StompApolloDriver
-        calls:
-            - [setStompClient, [@queue.driver.stomp.client]]
-
-    queue.produser.config:
-        class: Queue\QueueBundle\Model\Config
-        calls:
-            - [setDestination, ["/queue/test"]]
-            - [setExpire, [10]]
-
-    queue.producer.serializer:
+    grimkirill.serializer.json:
         class: Queue\QueueBundle\Serializer\Json
+    grimkirill.serializer.string:
+        class: Queue\QueueBundle\Serializer\String
+    grimkirill.serializer.serialize:
+        class: Queue\QueueBundle\Serializer\Serialize
 
-    queue.producer.test:
-        class: Queue\QueueBundle\Model\Producer
-        arguments: [@queue.driver.stomp, @queue.producer.serializer]
-        calls:
-            - [setConfig, [@queue.produser.config]]
+    #queue.driver.stomp.client:
+    #    class: Stomp\Client
+    #    arguments:
+    #        - "tcp://192.168.0.111:61613"
+    #        - {login: admin, passcode: mypassword }
+
+    #queue.driver.stomp:
+    #    class: Queue\QueueBundle\Driver\StompApolloDriver
+    #    calls:
+    #        - [setStompClient, [@queue.driver.stomp.client]]
+
+    #queue.produser.config:
+    #    class: Queue\QueueBundle\Model\Config
+    #    calls:
+    #        - [setDestination, ["/queue/test"]]
+    #        - [setExpire, [10]]
+
+    #queue.producer.serializer:
+    #    class: Queue\QueueBundle\Serializer\Json
+
+    #queue.producer.test:
+    #    class: Queue\QueueBundle\Model\Producer
+    #    arguments: [@queue.driver.stomp, @queue.producer.serializer]
+    #    calls:
+    #        - [setConfig, [@queue.produser.config]]
