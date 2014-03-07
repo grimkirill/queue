@@ -46,6 +46,17 @@ class QueueExtension extends Extension
         foreach ($config as $key => $producer) {
 
             $configDefinition = new Definition('%grimkirill.queue.producer_config.class%');
+
+            if (isset($producer['destination']) && $producer['destination']) {
+                $configDefinition->addMethodCall('setDestination', [$producer['exchange']]);
+            } else {
+                $configDefinition->addMethodCall('setDestination', [$key]);
+            }
+
+            if (isset($producer['params']) && $producer['params']) {
+                $configDefinition->addMethodCall('setParameters', [$producer['params']]);
+            }
+
             $container->setDefinition(sprintf('queue.producer_config.%s', $key), $configDefinition);
 
             $serializer = new Reference(sprintf('grimkirill.queue.serializer.%s', $producer['serializer']));

@@ -51,6 +51,8 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('connection')->defaultValue('default')->end()
                             ->scalarNode('serializer')->defaultValue('serialize')->end()
+                            ->scalarNode('exchange')->end()
+                            ->variableNode('params')->end()
 
                         ->end()
 //                    ->append($this->getExchangeConfiguration())
