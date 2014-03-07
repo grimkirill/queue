@@ -48,6 +48,11 @@ class Configuration implements ConfigurationInterface
                     ->canBeUnset()
                     ->useAttributeAsKey('key')
                     ->prototype('array')
+                        ->children()
+                            ->scalarNode('connection')->defaultValue('default')->end()
+                            ->scalarNode('serializer')->defaultValue('serialize')->end()
+
+                        ->end()
 //                    ->append($this->getExchangeConfiguration())
 //                    //->append($this->getQueueConfiguration())
 //            //            ->children()

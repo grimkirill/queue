@@ -4,13 +4,14 @@ parameters:
     grimkirill.queue.connection.driver.stomp_apollo: Queue\QueueBundle\Driver\StompApolloDriver
 
     grimkirill.queue.producer.class: Queue\QueueBundle\Model\Producer
+    grimkirill.queue.producer_config.class: Queue\QueueBundle\Model\Config
 
 services:
-    grimkirill.serializer.json:
+    grimkirill.queue.serializer.json:
         class: Queue\QueueBundle\Serializer\Json
-    grimkirill.serializer.string:
+    grimkirill.queue.serializer.string:
         class: Queue\QueueBundle\Serializer\String
-    grimkirill.serializer.serialize:
+    grimkirill.queue.serializer.serialize:
         class: Queue\QueueBundle\Serializer\Serialize
 
     #queue.driver.stomp.client:
