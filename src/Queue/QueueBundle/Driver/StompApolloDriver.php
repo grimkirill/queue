@@ -10,22 +10,11 @@ namespace Queue\QueueBundle\Driver;
 
 
 use Queue\QueueBundle\Model\Config;
+use Queue\QueueBundle\Model\Consumer;
 use Stomp\Client;
 
-class StompApolloDriver implements DriverInterface
+class StompApolloDriver extends StompDriver
 {
-    /**
-     * @var Client
-     */
-    protected $stompClient;
-
-    /**
-     * @param \Stomp\Client $stompClient
-     */
-    public function setStompClient($stompClient)
-    {
-        $this->stompClient = $stompClient;
-    }
 
     public function send($data, Config $config)
     {
@@ -38,7 +27,7 @@ class StompApolloDriver implements DriverInterface
         $this->stompClient->send($config->getDestination(), $data, $headers);
     }
 
-    public function subscribe($data)
+    public function subscribe(Consumer $consumer)
     {
         // TODO: Implement subscribe() method.
     }

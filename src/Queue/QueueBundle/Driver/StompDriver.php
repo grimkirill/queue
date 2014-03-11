@@ -10,6 +10,7 @@ namespace Queue\QueueBundle\Driver;
 
 
 use Queue\QueueBundle\Model\Config;
+use Queue\QueueBundle\Model\Consumer;
 use Stomp\Client;
 
 class StompDriver implements DriverInterface
@@ -26,16 +27,9 @@ class StompDriver implements DriverInterface
             'login' => $params['user'],
             'passcode' => $params['password'],
             'host'     => $params['vhost'],
+            'queue_prefix' => '/queue/'
         );
         $this->stompClient = new Client($host, $config);
-    }
-
-    /**
-     * @param \Stomp\Client $stompClient
-     */
-    public function setStompClient($stompClient)
-    {
-        $this->stompClient = $stompClient;
     }
 
     public function send($data, Config $config)
@@ -46,7 +40,7 @@ class StompDriver implements DriverInterface
     }
 
 
-    public function subscribe($data)
+    public function subscribe(Consumer $consumer)
     {
         // TODO: Implement subscribe() method.
     }

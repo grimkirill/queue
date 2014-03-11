@@ -2,9 +2,12 @@ parameters:
     grimkirill.queue.connection.driver.array: Queue\QueueBundle\Driver\ArrayDriver
     grimkirill.queue.connection.driver.stomp: Queue\QueueBundle\Driver\StompDriver
     grimkirill.queue.connection.driver.stomp_apollo: Queue\QueueBundle\Driver\StompApolloDriver
+    grimkirill.queue.connection.driver.ampq: Queue\QueueBundle\Driver\AmpqDriver
 
     grimkirill.queue.producer.class: Queue\QueueBundle\Model\Producer
+    grimkirill.queue.consumer.class: Queue\QueueBundle\Model\Consumer
     grimkirill.queue.producer_config.class: Queue\QueueBundle\Model\Config
+    grimkirill.queue.consumer_config.class: Queue\QueueBundle\Model\Config
 
 services:
     grimkirill.queue.serializer.json:

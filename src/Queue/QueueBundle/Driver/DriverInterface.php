@@ -10,11 +10,12 @@ namespace Queue\QueueBundle\Driver;
 
 
 use Queue\QueueBundle\Model\Config;
+use Queue\QueueBundle\Model\Consumer;
 
 interface DriverInterface
 {
 
     public function send($data, Config $config);
 
-    public function subscribe($data);
+    public function subscribe(Consumer $consumer);
 } 

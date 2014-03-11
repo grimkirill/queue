@@ -19,7 +19,7 @@ class HandlerCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('queue:handler')
+            ->setName('queue:consumer')
             ->setDescription('Run queue handler')
             ->addArgument('handler', InputArgument::REQUIRED, 'Id service container')
             ->addOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Server timeout in seconds', 600)
@@ -28,6 +28,7 @@ class HandlerCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
+        $consumer = $this->getContainer()->get('queue.consumer.' . $input->getArgument('handler'));
+        $consumer->execute();
     }
 } 

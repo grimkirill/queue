@@ -10,6 +10,7 @@ namespace Queue\QueueBundle\Driver;
 
 
 use Queue\QueueBundle\Model\Config;
+use Queue\QueueBundle\Model\Consumer;
 
 class ArrayDriver implements DriverInterface
 {
@@ -20,7 +21,7 @@ class ArrayDriver implements DriverInterface
         $this->messageList[$config->getDestination()][] = $data;
     }
 
-    public function subscribe($data)
+    public function subscribe(Consumer $consumer)
     {
         // TODO: Implement subscribe() method.
     }

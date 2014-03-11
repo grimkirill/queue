@@ -22,6 +22,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('queue');
         $rootNode
             ->children()
+
                 ->arrayNode('connections')
                     ->canBeUnset()
                     ->useAttributeAsKey('key')
@@ -34,7 +35,7 @@ class Configuration implements ConfigurationInterface
                                     ->thenInvalid('Invalid  driver "%s"')
                                 ->end()
                             ->end()
-                            ->scalarNode('host')->defaultValue('localhost')->end()
+                            ->variableNode('host')->defaultValue('localhost')->end()
                             ->scalarNode('port')->defaultValue(null)->end()
                             ->scalarNode('user')->defaultValue('guest')->end()
                             ->scalarNode('password')->defaultValue('guest')->end()
@@ -55,15 +56,24 @@ class Configuration implements ConfigurationInterface
                             ->variableNode('params')->end()
 
                         ->end()
-//                    ->append($this->getExchangeConfiguration())
-//                    //->append($this->getQueueConfiguration())
-//            //            ->children()
-//            //                ->scalarNode('connection')->defaultValue('default')->end()
-//            //                ->scalarNode('auto_setup_fabric')->defaultTrue()->end()
-//            //                ->scalarNode('class')->defaultValue('%old_sound_rabbit_mq.producer.class%')->end()
-//            //            ->end()
                     ->end()
                 ->end()
+
+                ->arrayNode('consumers')
+                    ->canBeUnset()
+                    ->useAttributeAsKey('key')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('connection')->defaultValue('default')->end()
+                            ->scalarNode('serializer')->defaultValue('serialize')->end()
+                            ->scalarNode('exchange')->end()
+                            ->variableNode('callback')->end()
+                            ->variableNode('params')->end()
+
+                        ->end()
+                    ->end()
+                ->end()
+
             ->end();
 
 
