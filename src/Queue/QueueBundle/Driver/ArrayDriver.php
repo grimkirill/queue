@@ -19,12 +19,20 @@ class ArrayDriver implements DriverInterface
 
     public function send($data, Config $config)
     {
-        $this->messageList[$config->getDestination()][] = $data;
+        $this->messageList[$config->getDestination()][] = [
+            'message' => $data,
+            'config'  => $config->getConfig(),
+        ];
     }
 
     public function subscribe(Consumer $consumer, ExecutionCondition $condition)
     {
-        // TODO: Implement subscribe() method.
+        if (array_key_exists($consumer->getConfig()->getDestination(), $this->messageList)) {
+            $msgList = $this->messageList[$consumer->getConfig()->getDestination()];
+            foreach ($msgList AS $msg) {
+                $consumer->callback($msg['message']);
+            }
+        }
     }
 
     public function getMessageList()

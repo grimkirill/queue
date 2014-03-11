@@ -33,6 +33,9 @@ class StompDriver implements DriverInterface
         $this->stompClient = new Client($host, $config);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function send($data, Config $config)
     {
         $headers = $config->getParameters();
@@ -40,10 +43,22 @@ class StompDriver implements DriverInterface
         $this->stompClient->send($config->getDestination(), $data, $headers);
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function subscribe(Consumer $consumer, ExecutionCondition $condition)
     {
-        // TODO: Implement subscribe() method.
+        $this->stompClient->subscribe($consumer->getConfig()->getDestination());
+        while ($condition->isValid()) {
+            if ($message = $this->stompClient->readMessage(10)) {
+                $result = $consumer->callback($message->getBody());
+                if ($result) {
+                    $message->ack();
+                } else {
+                    $message->nack();
+                }
+            }
+        }
     }
 
 } 

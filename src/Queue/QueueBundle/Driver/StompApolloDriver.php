@@ -28,9 +28,5 @@ class StompApolloDriver extends StompDriver
         $this->stompClient->send($config->getDestination(), $data, $headers);
     }
 
-    public function subscribe(Consumer $consumer, ExecutionCondition $condition)
-    {
-        // TODO: Implement subscribe() method.
-    }
 
 } 
