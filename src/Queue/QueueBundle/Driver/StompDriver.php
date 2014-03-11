@@ -11,6 +11,7 @@ namespace Queue\QueueBundle\Driver;
 
 use Queue\QueueBundle\Model\Config;
 use Queue\QueueBundle\Model\Consumer;
+use Queue\QueueBundle\Model\ExecutionCondition;
 use Stomp\Client;
 
 class StompDriver implements DriverInterface
@@ -40,7 +41,7 @@ class StompDriver implements DriverInterface
     }
 
 
-    public function subscribe(Consumer $consumer)
+    public function subscribe(Consumer $consumer, ExecutionCondition $condition)
     {
         // TODO: Implement subscribe() method.
     }

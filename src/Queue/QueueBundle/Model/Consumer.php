@@ -86,9 +86,9 @@ class Consumer
         return $result;
     }
 
-    public function execute()
+    public function execute(ExecutionCondition $condition)
     {
-        $this->driver->subscribe($this);
+        $this->driver->subscribe($this, $condition);
     }
 
     function __invoke($message)

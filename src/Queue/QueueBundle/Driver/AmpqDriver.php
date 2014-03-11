@@ -10,9 +10,11 @@ namespace Queue\QueueBundle\Driver;
 
 
 use PhpAmqpLib\Connection\AMQPConnection;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Queue\QueueBundle\Model\Config;
 use Queue\QueueBundle\Model\Consumer;
+use Queue\QueueBundle\Model\ExecutionCondition;
 
 class AmpqDriver implements DriverInterface
 {
@@ -57,14 +59,17 @@ class AmpqDriver implements DriverInterface
         return $result;
     }
 
-    public function subscribe(Consumer $consumer)
+    public function subscribe(Consumer $consumer, ExecutionCondition $condition)
     {
-        $startTime = time();
         $this->consumer = $consumer;
         $channel = $this->client->channel();
         $channel->basic_consume($consumer->getConfig()->getDestination(), '', false, false, false, false, [$this, 'callback']);
-        while (($startTime + 10) > time()) {
-            $channel->wait(null, null, 10);
+        while ($condition->isValid()) {
+            try {
+                $channel->wait(null, null, 1);
+            } catch (AMQPTimeoutException $e) {
+
+            }
         }
     }
 

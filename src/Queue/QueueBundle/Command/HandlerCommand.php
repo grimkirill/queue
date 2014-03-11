@@ -8,6 +8,7 @@
 
 namespace Queue\QueueBundle\Command;
 
+use Queue\QueueBundle\Model\ExecutionCondition;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,6 +30,7 @@ class HandlerCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $consumer = $this->getContainer()->get('queue.consumer.' . $input->getArgument('handler'));
-        $consumer->execute();
+        $condition = new ExecutionCondition();
+        $consumer->execute($condition);
     }
 } 
