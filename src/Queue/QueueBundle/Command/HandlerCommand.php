@@ -23,7 +23,7 @@ class HandlerCommand extends ContainerAwareCommand
             ->setName('queue:consumer')
             ->setDescription('Run queue handler')
             ->addArgument('handler', InputArgument::REQUIRED, 'Id service container')
-            ->addOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Server timeout in seconds', 600)
+            ->addOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Server timeout in seconds')
         ;
     }
 
@@ -31,6 +31,7 @@ class HandlerCommand extends ContainerAwareCommand
     {
         $consumer = $this->getContainer()->get('queue.consumer.' . $input->getArgument('handler'));
         $condition = new ExecutionCondition();
+        $condition->setTimeout($input->getOption('timeout'));
         $consumer->execute($condition);
     }
 } 
