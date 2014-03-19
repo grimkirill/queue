@@ -15,9 +15,36 @@ class ExecutionCondition
 
     protected $timeout;
 
+    protected $stop = false;
+
     function __construct()
     {
         $this->startTime = time();
+    }
+
+    /**
+     * Остановить
+     */
+    public function stop()
+    {
+        $this->stop = true;
+    }
+
+    /**
+     * Включить обработку сигналов
+     *
+     * @return bool
+     */
+    public function enableSignal()
+    {
+        if (function_exists('pcntl_signal')) {
+            declare(ticks=1);
+
+            pcntl_signal(SIGTERM, array($this, 'stop'));
+            pcntl_signal(SIGINT, array($this, 'stop'));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -31,6 +58,10 @@ class ExecutionCondition
 
     public function isValid()
     {
+        if ($this->stop) {
+            return false;
+        }
+
         if ($this->timeout) {
             if (($this->timeout + $this->startTime) < time()) {
                 return false;
