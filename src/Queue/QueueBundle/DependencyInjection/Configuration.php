@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('driver')
                                 ->defaultValue('ampq')
                                 ->isRequired()->validate()
-                                    ->ifNotInArray(array('stomp', 'stomp_apollo', 'ampq', 'array', 'service'))
+                                    ->ifNotInArray(array('stomp', 'stomp_apollo', 'ampq', 'array', 'service', 'direct'))
                                     ->thenInvalid('Invalid  driver "%s"')
                                 ->end()
                             ->end()
