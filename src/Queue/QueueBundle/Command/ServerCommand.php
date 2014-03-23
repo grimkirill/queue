@@ -32,13 +32,24 @@ class ServerCommand extends ContainerAwareCommand
         //$output->writeln($input->getOption('env'));
         $php_bin = new PhpExecutableFinder();
 
-        $command = new Process($php_bin->find(). ' ' . $_SERVER['SCRIPT_FILENAME'] . ' queue:handler -h');
+        $command = new Process($php_bin->find(). ' ' . $_SERVER['SCRIPT_FILENAME'] . ' queue:consumer test --timeout=10');
         //$command = new Process($_SERVER['SCRIPT_FILENAME'] . ' queue:handler -h');
+        $command->start();
+
+        while ($command->isRunning()) {
+            var_dump($command->isRunning());
+            sleep(1);
+        }
+
+
+
+        var_dump($command->getCommandLine());
+        var_dump($command->getErrorOutput());
+        var_dump($command->getCommandLine());
 
         $command->run();
-        var_dump($command->getCommandLine());
         var_dump($command->getOutput());
-        var_dump($command->getErrorOutput());
+
 
     }
 } 
