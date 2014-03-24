@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class HandlerCommand extends ContainerAwareCommand
+class ConsumerCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -24,14 +24,22 @@ class HandlerCommand extends ContainerAwareCommand
             ->setDescription('Run queue handler')
             ->addArgument('handler', InputArgument::REQUIRED, 'Id service container')
             ->addOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Server timeout in seconds')
+            ->addOption('signal', null, InputOption::VALUE_NONE, 'Handle signal')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $consumer = $this->getContainer()->get('queue.consumer.' . $input->getArgument('handler'));
+        if ($this->getContainer()->has($input->getArgument('handler'))) {
+            $consumer = $this->getContainer()->get($input->getArgument('handler'));
+        } else {
+            $consumer = $this->getContainer()->get('queue.consumer.' . $input->getArgument('handler'));
+        }
         $condition = new ExecutionCondition();
         $condition->setTimeout($input->getOption('timeout'));
+        if ($input->getOption('signal')) {
+            $condition->enableSignal();
+        }
         $consumer->execute($condition);
     }
 } 

@@ -18,6 +18,8 @@ use Symfony\Component\Process\Process;
 
 class ServerCommand extends ContainerAwareCommand
 {
+    protected $running = true;
+
     protected function configure()
     {
         $this
@@ -27,18 +29,35 @@ class ServerCommand extends ContainerAwareCommand
         ;
     }
 
+    public function signalStop()
+    {
+        $this->running = false;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        //$output->writeln($input->getOption('env'));
+        if (function_exists('pcntl_signal')) {
+            declare(ticks=1);
+            pcntl_signal(SIGTERM, array($this, 'signalStop'));
+            pcntl_signal(SIGINT, array($this, 'signalStop'));
+        }
+
         $php_bin = new PhpExecutableFinder();
+        $cmdConsole = $php_bin->find(). ' ' . $_SERVER['SCRIPT_FILENAME'] . ' queue:consumer ';
+        $cmdOptions = ' --env=' . $input->getOption('env')
+            . ' --signal'
+            . ' --timeout=' . $input->getOption('timeout');
 
-        $command = new Process($php_bin->find(). ' ' . $_SERVER['SCRIPT_FILENAME'] . ' queue:handler -h');
-        //$command = new Process($_SERVER['SCRIPT_FILENAME'] . ' queue:handler -h');
+        $command = new Process($cmdConsole . 'test' . $cmdOptions);
 
-        $command->run();
-        var_dump($command->getCommandLine());
-        var_dump($command->getOutput());
-        var_dump($command->getErrorOutput());
+        do {
+            if (!$command->isRunning()) {
+                $command->start();
+            }
+            sleep(1);
+        } while ($this->running);
 
+        $command->stop();
+        $output->writeln($command->getOutput());
     }
 } 
