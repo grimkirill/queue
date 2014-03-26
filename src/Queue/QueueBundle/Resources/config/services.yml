@@ -37,29 +37,3 @@ services:
 
     grimkirill.queue.template.connection.ampq:
         class: %grimkirill.queue.connection.driver.ampq%
-
-    #queue.driver.stomp.client:
-    #    class: Stomp\Client
-    #    arguments:
-    #        - "tcp://192.168.0.111:61613"
-    #        - {login: admin, passcode: mypassword }
-
-    #queue.driver.stomp:
-    #    class: Queue\QueueBundle\Driver\StompApolloDriver
-    #    calls:
-    #        - [setStompClient, [@queue.driver.stomp.client]]
-
-    #queue.produser.config:
-    #    class: Queue\QueueBundle\Model\Config
-    #    calls:
-    #        - [setDestination, ["/queue/test"]]
-    #        - [setExpire, [10]]
-
-    #queue.producer.serializer:
-    #    class: Queue\QueueBundle\Serializer\Json
-
-    #queue.producer.test:
-    #    class: Queue\QueueBundle\Model\Producer
-    #    arguments: [@queue.driver.stomp, @queue.producer.serializer]
-    #    calls:
-    #        - [setConfig, [@queue.produser.config]]

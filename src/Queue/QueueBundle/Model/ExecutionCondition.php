@@ -8,8 +8,13 @@
 
 namespace Queue\QueueBundle\Model;
 
-
-class ExecutionCondition 
+/**
+ * Class ExecutionCondition
+ *
+ * @package Queue\QueueBundle\Model
+ * @author Kirill Skatov kirill@noadmin.ru
+ */
+class ExecutionCondition
 {
     protected $startTime;
 
@@ -20,6 +25,8 @@ class ExecutionCondition
     protected $processedMessagesCount = 0;
 
     protected $processedMessagesLimit = 0;
+
+    protected $callbackList = [];
 
     function __construct()
     {
@@ -52,6 +59,8 @@ class ExecutionCondition
     }
 
     /**
+     * Установить время выполенения
+     *
      * @param mixed $timeout
      */
     public function setTimeout($timeout)
@@ -59,7 +68,11 @@ class ExecutionCondition
         $this->timeout = $timeout;
     }
 
-
+    /**
+     * Условия позволяют продолжать обработку сообщений
+     *
+     * @return bool
+     */
     public function isValid()
     {
         if ($this->stop) {
@@ -78,6 +91,10 @@ class ExecutionCondition
             }
         }
 
+        if (!$this->isValidCallback()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -93,6 +110,26 @@ class ExecutionCondition
     public function getMessagesCount()
     {
         return $this->processedMessagesCount;
+    }
+
+    /**
+     * Добавить условие выполнения
+     *
+     * @param callable $callback
+     */
+    public function addCallback(callable $callback)
+    {
+        $this->callbackList[] = $callback;
+    }
+
+    public function isValidCallback()
+    {
+        foreach ($this->callbackList AS $callback) {
+            if (!$callback()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 } 

@@ -77,22 +77,21 @@ class ServerCommand extends ContainerAwareCommand {
             do {
                 foreach ($commandList AS $key => $command) {
                     if (!$command->isRunning()) {
-                        /*if ($command->getExitCode()) {
+                        if ($command->getExitCode()) {
                             $output->writeln('<error>' . $command->getCommandLine() . '</error>');
                             $output->writeln('<error>' . $command->getErrorOutput() . '</error>');
                             unset($commandList[$key]);
                         } else {
                             $command->start();
                         }
-                        */
                     }
                 }
                 sleep(1);
             } while ($this->running);
         }
+
         foreach ($commandList AS $command) {
             $command->stop();
         }
-
     }
 } 
