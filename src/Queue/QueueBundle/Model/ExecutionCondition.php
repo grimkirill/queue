@@ -90,4 +90,9 @@ class ExecutionCondition
         $this->processedMessagesCount ++;
     }
 
+    public function getMessagesCount()
+    {
+        return $this->processedMessagesCount;
+    }
+
 } 

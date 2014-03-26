@@ -68,16 +68,23 @@ class ServerCommand extends ContainerAwareCommand {
                 }
 
                 for ($i = 0; $i < $count; $i++) {
-                    $commandList[] = new Process($cmdConsole . 'test' . $cmdOptions);
+                    $commandList[] = new Process($cmdConsole . $consumerId . $cmdOptions);
                 }
             }
         }
 
         if ($commandList) {
             do {
-                foreach ($commandList AS $command) {
+                foreach ($commandList AS $key => $command) {
                     if (!$command->isRunning()) {
-                        $command->start();
+                        /*if ($command->getExitCode()) {
+                            $output->writeln('<error>' . $command->getCommandLine() . '</error>');
+                            $output->writeln('<error>' . $command->getErrorOutput() . '</error>');
+                            unset($commandList[$key]);
+                        } else {
+                            $command->start();
+                        }
+                        */
                     }
                 }
                 sleep(1);

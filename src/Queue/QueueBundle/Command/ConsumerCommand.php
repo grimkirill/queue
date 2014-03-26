@@ -40,6 +40,13 @@ class ConsumerCommand extends ContainerAwareCommand
         if ($input->getOption('signal')) {
             $condition->enableSignal();
         }
+        $startTime = microtime(true);
         $consumer->execute($condition);
+
+        if ($output->getVerbosity() > $output::VERBOSITY_VERBOSE) {
+            $output->writeln('<info>Processed message count:</info> <comment>' . $condition->getMessagesCount() . '</comment>');
+            $output->writeln('<info>Processed message time:</info> <comment>' . round($consumer->getTotalWorkTime(), 3) . ' sec</comment>');
+            $output->writeln('<info>Total time:</info> <comment>' . round(microtime(true) - $startTime, 3) . ' sec</comment>');
+        }
     }
 } 

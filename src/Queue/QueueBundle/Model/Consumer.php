@@ -27,6 +27,8 @@ class Consumer
 
     protected $callback;
 
+    protected $totalWorkTime = 0;
+
     /**
      * @var Config
      */
@@ -72,7 +74,6 @@ class Consumer
         return $this->config;
     }
 
-
     /**
      * Выполнить вызываемый метод
      *
@@ -81,8 +82,10 @@ class Consumer
      */
     public function callback($message)
     {
+        $startTime = microtime(true);
         $data = $this->serializer->unSerialize($message);
         $result = call_user_func($this->callback, $data);
+        $this->totalWorkTime += (microtime(true) - $startTime);
         return $result;
     }
 
@@ -96,5 +99,12 @@ class Consumer
         return $this->callback($message);
     }
 
+    /**
+     * @return float
+     */
+    public function getTotalWorkTime()
+    {
+        return $this->totalWorkTime;
+    }
 
 } 
