@@ -21,6 +21,23 @@ services:
     grimkirill.queue.holder:
         class: Queue\QueueBundle\Model\QueueHolder
 
+    grimkirill.queue.template.connection.stomp:
+        class: %grimkirill.queue.connection.driver.stomp%
+
+    grimkirill.queue.template.connection.stomp_apollo:
+        class: %grimkirill.queue.connection.driver.stomp_apollo%
+
+    grimkirill.queue.template.connection.array:
+        class: %grimkirill.queue.connection.driver.array%
+
+    grimkirill.queue.template.connection.direct:
+        class: %grimkirill.queue.connection.driver.direct%
+        calls:
+            - [setContainer, [@service_container]]
+
+    grimkirill.queue.template.connection.ampq:
+        class: %grimkirill.queue.connection.driver.ampq%
+
     #queue.driver.stomp.client:
     #    class: Stomp\Client
     #    arguments:

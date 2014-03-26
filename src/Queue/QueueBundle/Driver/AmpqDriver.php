@@ -29,12 +29,17 @@ class AmpqDriver implements DriverInterface
      */
     protected $consumer;
 
-    function __construct($params = array())
+    /**
+     * @var ExecutionCondition
+     */
+    protected $condition;
+
+    public function setConfig(array $config)
     {
-        if (!($port = $params['port'])) {
+        if (!($port = $config['port'])) {
             $port = 5672;
         }
-        $this->client = new AMQPConnection($params['host'], $port, $params['user'], $params['password'], $params['vhost']);
+        $this->client = new AMQPConnection($config['host'], $port, $config['user'], $config['password'], $config['vhost']);
     }
 
 
@@ -50,6 +55,7 @@ class AmpqDriver implements DriverInterface
 
     public function callback(AMQPMessage $message)
     {
+        $this->condition->incrementMessagesCount();
         $result = $this->consumer->callback($message->body);
         if ($result) {
             $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
@@ -62,11 +68,12 @@ class AmpqDriver implements DriverInterface
     public function subscribe(Consumer $consumer, ExecutionCondition $condition)
     {
         $this->consumer = $consumer;
+        $this->condition = $condition;
         $channel = $this->client->channel();
         $channel->basic_consume($consumer->getConfig()->getDestination(), '', false, false, false, false, [$this, 'callback']);
         while ($condition->isValid()) {
             try {
-                $channel->wait(null, null, 1);
+                $channel->wait(null, null, 10);
             } catch (AMQPTimeoutException $e) {
 
             }

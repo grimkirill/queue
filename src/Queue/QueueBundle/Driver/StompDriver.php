@@ -21,17 +21,18 @@ class StompDriver implements DriverInterface
      */
     protected $stompClient;
 
-    function __construct($params = array())
+    public function setConfig(array $config)
     {
-        $host = $params['host'];
-        $config = array(
-            'login' => $params['user'],
-            'passcode' => $params['password'],
-            'host'     => $params['vhost'],
+        $host = $config['host'];
+        $params = array(
+            'login' => $config['user'],
+            'passcode' => $config['password'],
+            'host'     => $config['vhost'],
             'queue_prefix' => '/queue/'
         );
-        $this->stompClient = new Client($host, $config);
+        $this->stompClient = new Client($host, $params);
     }
+
 
     /**
      * @inheritdoc
@@ -51,6 +52,7 @@ class StompDriver implements DriverInterface
         $this->stompClient->subscribe($consumer->getConfig()->getDestination());
         while ($condition->isValid()) {
             if ($message = $this->stompClient->readMessage(10)) {
+                $condition->incrementMessagesCount();
                 $result = $consumer->callback($message->getBody());
                 if ($result) {
                     $message->ack();

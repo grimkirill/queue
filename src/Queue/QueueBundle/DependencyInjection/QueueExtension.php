@@ -41,12 +41,11 @@ class QueueExtension extends Extension
     protected function loadConnections($config, ContainerBuilder $container)
     {
         foreach ($config as $key => $connection) {
-            $driverClass = '%grimkirill.queue.connection.driver.' . $connection['driver'] . '%';
-            $definition = new Definition($driverClass, [$connection]);
-            if ($connection['driver'] == 'direct') {
-                $definition->addMethodCall('setContainer', [new Reference('service_container')]);
+            if ($definitionTemplate = $container->getDefinition('grimkirill.queue.template.connection.' . $connection['driver'])) {
+                $definition = clone $definitionTemplate;
+                $definition->addMethodCall('setConfig', [$connection]);
+                $container->setDefinition(sprintf('queue.connection.%s', $key), $definition);
             }
-            $container->setDefinition(sprintf('queue.connection.%s', $key), $definition);
         }
     }
 

@@ -17,6 +17,10 @@ class ExecutionCondition
 
     protected $stop = false;
 
+    protected $processedMessagesCount = 0;
+
+    protected $processedMessagesLimit = 0;
+
     function __construct()
     {
         $this->startTime = time();
@@ -68,7 +72,22 @@ class ExecutionCondition
             }
         }
 
+        if ($this->processedMessagesLimit) {
+            if ($this->processedMessagesCount >= $this->processedMessagesLimit) {
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    /**
+     * Увеличить количество обработанных сообщений
+     *
+     */
+    public function incrementMessagesCount()
+    {
+        $this->processedMessagesCount ++;
     }
 
 } 

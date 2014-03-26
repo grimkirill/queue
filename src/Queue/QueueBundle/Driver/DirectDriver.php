@@ -15,14 +15,12 @@ use Queue\QueueBundle\Model\ExecutionCondition;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class DirectDriver implements DriverInterface, ContainerAwareInterface
+class DirectDriver extends ArrayDriver implements ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
      */
     protected $container;
-
-    protected $messageList = array();
 
     /**
      * @inheritdoc
@@ -34,32 +32,13 @@ class DirectDriver implements DriverInterface, ContainerAwareInterface
 
     public function send($data, Config $config)
     {
-        $this->messageList[$config->getDestination()][] = [
-            'message' => $data,
-            'config'  => $config->getConfig(),
-        ];
+        parent::send($data, $config);
+
         foreach ($this->container->get('grimkirill.queue.holder')->getConsumerList() AS $id) {
             $condition = new ExecutionCondition();
             $condition->setTimeout(1);
             $this->container->get($id)->execute($condition);
-
         }
-
-    }
-
-    public function subscribe(Consumer $consumer, ExecutionCondition $condition)
-    {
-        if (array_key_exists($consumer->getConfig()->getDestination(), $this->messageList)) {
-            $msgList = $this->messageList[$consumer->getConfig()->getDestination()];
-            foreach ($msgList AS $msg) {
-                $consumer->callback($msg['message']);
-            }
-        }
-    }
-
-    public function getMessageList()
-    {
-        return $this->messageList;
     }
 
 } 

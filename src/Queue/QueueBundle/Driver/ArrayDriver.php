@@ -15,6 +15,11 @@ use Queue\QueueBundle\Model\ExecutionCondition;
 
 class ArrayDriver implements DriverInterface
 {
+    public function setConfig(array $config)
+    {
+
+    }
+
     protected $messageList = array();
 
     public function send($data, Config $config)
@@ -30,7 +35,10 @@ class ArrayDriver implements DriverInterface
         if (array_key_exists($consumer->getConfig()->getDestination(), $this->messageList)) {
             $msgList = $this->messageList[$consumer->getConfig()->getDestination()];
             foreach ($msgList AS $msg) {
-                $consumer->callback($msg['message']);
+                if ($condition->isValid()) {
+                    $condition->incrementMessagesCount();
+                    $consumer->callback($msg['message']);
+                }
             }
         }
     }

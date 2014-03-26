@@ -15,6 +15,7 @@ use Queue\QueueBundle\Model\ExecutionCondition;
 
 interface DriverInterface
 {
+    public function setConfig(array $config);
 
     public function send($data, Config $config);
 
