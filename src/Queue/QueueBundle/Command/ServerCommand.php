@@ -16,8 +16,12 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\PhpProcess;
 use Symfony\Component\Process\Process;
 
-class ServerCommand extends ContainerAwareCommand
-{
+/**
+ * Class ServerCommand
+ * @package Queue\QueueBundle\Command
+ * @author Kirill Skatov kirill@noadmin.ru
+ */
+class ServerCommand extends ContainerAwareCommand {
     protected $running = true;
 
     protected function configure()
@@ -29,6 +33,9 @@ class ServerCommand extends ContainerAwareCommand
         ;
     }
 
+    /**
+     * Called by pcntl_signal
+     */
     public function signalStop()
     {
         $this->running = false;
@@ -47,17 +54,38 @@ class ServerCommand extends ContainerAwareCommand
         $cmdOptions = ' --env=' . $input->getOption('env')
             . ' --signal'
             . ' --timeout=' . $input->getOption('timeout');
+        $queueHolder = $this->getContainer()->get('grimkirill.queue.holder');
 
-        $command = new Process($cmdConsole . 'test' . $cmdOptions);
+        /**
+         * @var $commandList Process[]
+         */
+        $commandList = [];
 
-        do {
-            if (!$command->isRunning()) {
-                $command->start();
+        foreach ($queueHolder->getConsumerList() AS $consumerId) {
+            if ($count = $queueHolder->getConsumerCount($consumerId)) {
+                if ($output->getVerbosity() > $output::VERBOSITY_VERBOSE) {
+                    $output->writeln('Run consumer <info>' . $consumerId . '</info> <comment>' . $count . '</comment>');
+                }
+
+                for ($i = 0; $i < $count; $i++) {
+                    $commandList[] = new Process($cmdConsole . 'test' . $cmdOptions);
+                }
             }
-            sleep(1);
-        } while ($this->running);
+        }
 
-        $command->stop();
-        $output->writeln($command->getOutput());
+        if ($commandList) {
+            do {
+                foreach ($commandList AS $command) {
+                    if (!$command->isRunning()) {
+                        $command->start();
+                    }
+                }
+                sleep(1);
+            } while ($this->running);
+        }
+        foreach ($commandList AS $command) {
+            $command->stop();
+        }
+
     }
 } 

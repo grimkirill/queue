@@ -69,7 +69,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('exchange')->end()
                             ->variableNode('callback')->end()
                             ->variableNode('params')->end()
-
+                            ->scalarNode('number')->defaultValue('0')->end()
                         ->end()
                     ->end()
                 ->end()

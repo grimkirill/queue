@@ -125,8 +125,11 @@ class QueueExtension extends Extension
             $config = new Reference(sprintf('queue.consumer_config.%s', $key));
             $consumerDefinition->addMethodCall('setConfig', [$config]);
 
-            $container->setDefinition(sprintf('queue.consumer.%s', $key), $consumerDefinition);
-            $container->getDefinition('grimkirill.queue.holder')->addMethodCall('addConsumer', [sprintf('queue.consumer.%s', $key)]);
+            $consumerId = sprintf('queue.consumer.%s', $key);
+            $container->setDefinition($consumerId, $consumerDefinition);
+            $holder = $container->getDefinition('grimkirill.queue.holder');
+            $holder->addMethodCall('addConsumer', [$consumerId]);
+            $holder->addMethodCall('addConsumerCount', [$consumerId, $consumer['number']]);
         }
     }
 }
