@@ -113,6 +113,14 @@ class ExecutionCondition
     }
 
     /**
+     * @param int $processedMessagesLimit
+     */
+    public function setProcessedMessagesLimit($processedMessagesLimit)
+    {
+        $this->processedMessagesLimit = $processedMessagesLimit;
+    }
+
+    /**
      * Добавить условие выполнения
      *
      * @param callable $callback

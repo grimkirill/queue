@@ -34,10 +34,11 @@ class ArrayDriver implements DriverInterface
     {
         if (array_key_exists($consumer->getConfig()->getDestination(), $this->messageList)) {
             $msgList = $this->messageList[$consumer->getConfig()->getDestination()];
-            foreach ($msgList AS $msg) {
+            foreach ($msgList AS $key => $msg) {
                 if ($condition->isValid()) {
                     $condition->incrementMessagesCount();
                     $consumer->callback($msg['message']);
+                    unset($this->messageList[$consumer->getConfig()->getDestination()][$key]);
                 }
             }
         }

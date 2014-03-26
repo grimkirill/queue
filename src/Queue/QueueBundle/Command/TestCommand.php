@@ -27,7 +27,10 @@ class TestCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $client = $this->getContainer()->get('queue.producer.test');
-        $client->publish('test real');
+        for ($i = 0; $i < 10 ; $i++) {
+            $client->publish('test ' . $i);
+        }
+        //$client->publish('test real');
 
         //$consumer = $this->getContainer()->get('queue.consumer.test');
         //$consumer->callback(serialize('test message'));
